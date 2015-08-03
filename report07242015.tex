@@ -1,0 +1,181 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage{comment}
+\usepackage{import}
+%citepath="/home/bruno/users/weh40/sims_phosim/data/SEDs/SEDs" # my default path
+%dirlist=["BD_H2O_1", "BD_O3_1run", "BD_O2_1run", "H2O-new_4run-img", "H2O-aperture_1run", "O3_2run-100", "O2_1run" ]
+
+
+\usepackage{xspace} 
+\usepackage{graphicx}
+\usepackage{subfig}
+\usepackage{float}
+\usepackage{placeins}
+\usepackage[document]{ragged2e}
+
+\DeclareGraphicsExtensions{.pdf,.png}
+\graphicspath{{/home/bruno/users/weh40/Pictures/}}
+\newcommand{\citp}{/home/bruno/users/weh40/sims_phosim/data/SEDs/SEDs/back/}
+\newcommand{\fa}{BD_H2O_1/}
+\newcommand{\fb}{BD_O3_1run/}
+\newcommand{\fc}{BD_O2_1run/}
+\newcommand{\fd}{H2O-new_4run-img/}
+\newcommand{\fe}{H2O-aperture_1run/}
+\newcommand{\ff}{O3_2run-100/}
+\newcommand{\fg}{O2_1run/}
+\let\oldtabular\tabular
+\renewcommand{\tabular}{\footnotesize\oldtabular}
+\usepackage{amsmath}
+\begin{document}
+
+\title{Report on numerical simulation of photometry variation with water vapor}
+\author{Wei Hu}
+\maketitle
+
+\justify
+
+Water vapor in the Earth's atmosphere creates a significant and variable source of absorption in photometry of astronomical sources.  This is particularly acute in the y (and z) optical bands.
+\paragraph{}
+
+We here demonstrate the feasibility of determining the precipitable water vapor during an exposure by observing the shifts in y- (and z-band) magnitudes as a function of colors like g-r, g-z, g-y.
+
+
+
+
+\clearpage
+\tableofcontents
+\clearpage
+
+\section{Scope and Goals}
+
+
+Methods: We simulate observations of 526 white drawf and 4886 main sequence stars in the LSST PhoSim SED library and propagate through nominal filters and system throughput produced via ModTran .  This simulation is done purely through numeric integration of the SEDs, instrument throughput, and atmospheric transmission, the result of which can be compared and verified by Photon Simulator (Phosim) \cite{manual}.
+\paragraph{}
+We use a grid of atmospheric parameters to generate a suite of simulated observations.  We then fit for the value of the H2O column density using a fitting function (of no more than 19 parameters) that uses, e.g., the observed bands magnitudes g, r, z, y, as compared to the true bands magnitudes g, r, z, y; and g-r, g-z, g-y colors,  to predict the H2O column density.
+
+\graphicspath{{/home/bruno/users/weh40/sims_phosim/data/SEDs/SEDs/back/4thrun/}}
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[page=1,width=0.7\textwidth,trim=1mm 1.5mm 1mm 205mm,clip=true,angle=0]{color-color}
+\caption{color\_color diagram for Black Body spectra, with variation vs LSST norm value indicated (0-10, corresponding to 0 - 138.6 mm of PWV), norm is easy to label here.}
+\end{center}
+\end{figure}
+
+
+\paragraph{}
+\paragraph{}
+
+
+The expected senario is that an extensive 2D (or multidimensional) color\_color diagram is filled with SEDs which have relatively smooth spectra and continuous trend along HR diagram. As a result, an analytic model can be deduced, such that we can get a convenient vector fields of correction dependent on specific locus on the color\_color plane (or hyperplane). 
+
+However, in practice a number of issues come into play, like the peculiarities of SEDs from certain source, which may not have a continuous and smooth trend along color-axes on the diagam.
+
+
+
+\subsection{Background: LSST Parameters}
+
+Our numerical simulation is based on comparison with the Phosim result. We list the conversion of Phosim parameters to real units, as well as range of variation of gases in reality, including $H_{2}O$, $O_{3}$, and $O_{3}$. The column densities and LSST norm values are obtained by vertical integration of the relevant profiles in the phosim database.
+
+\rm{$H_2O$}: LSST defalut column density (ie. norm): (Column integration of h2oprofile.txt) timing nprofile.txt (vertical profile) 4.633$\times10^{22}/cm^2$ or 13.86 mm in Precipitable water volumn (PWV), 
+
+\rm{- usual variation over a year: 20 times in range or 0.3 - 6 cm in PWV}
+
+\rm{$O_3$}: LSST norm: (Integration of profiles o3profile.txt) 6.838$\times10^{18}/cm^2$=254 Dobson Unit (DU),
+
+\rm{- usual variation over a year: 20-50\%}
+
+\rm{$O_2$}: LSST norm: (Integration of nprofile.txt timing $O_2$ mixing ratio) 4.517$\times10^{24}/cm^2$
+
+\rm{- usual variation over a year: 0.02\%} \cite{atmoswater}
+
+The range of simulation is chosen according to reality.
+
+\section{Input Data}
+\subsection{Gases Transmission}
+
+The transmission of gases is calculated using the Beer's law, which has been compared with the phosim results to a range far exceeding the reality (to 100 LSST norm). The difference between the two approaches is small except for the absolute intensities. All the behaviors and patten of residuals are the same, which has been tested by model fit.
+
+The Beer's law:
+\begin{equation}
+T_{\rm gas}(\lambda)=e^{-\int\sigma(\lambda)N(z)}
+\end{equation}
+where $\sigma(\lambda)$: cross section
+N(z): vertical profiles
+
+In light of this simple relationship, we can calculate gases transmission from cross sections of gases that are used by phosim, after column integration has been done. Below we list examples of water, ozone and oxygen, with column densities or usual values indicated.
+
+
+\graphicspath{{/home/bruno/users/weh40/Pictures/}}
+\clearpage
+\centering
+Water
+\begin{figure}[hb!]
+\centering
+\subfloat[H$_2$O=3.5 mm\label{subfig_1}]{
+\includegraphics[width=\textwidth,trim=1mm 2mm 1mm 2mm,clip=true,angle=0]{h2ocs-h2ocs_0_1}
+}
+\subfloat[H$_2$O=14 mm\label{subfig_2}]{
+\includegraphics[width=\textwidth,trim=1mm 2mm 1mm 2mm,clip=true,angle=0]{h2ocs-h2ocs_0_4}
+}
+
+
+\caption{H$_2$O transmittance}
+\end{figure}
+
+\clearpage
+Ozone
+\begin{figure}[hb!]
+\centering
+\subfloat[O$_3$=254 DU\label{subfig_1}]{
+\includegraphics[width=\textwidth,trim=1mm 2mm 1mm 2mm,clip=true,angle=0]{o3cs-o3cs}
+}
+
+\caption{O$_3$ transmittance}
+\end{figure}
+
+Oxygen
+\begin{figure}[hb!]
+\centering
+\subfloat[O$_2$ for 1 atm air\label{subfig_1}]{
+\includegraphics[width=\textwidth,trim=1mm 2mm 1mm 2mm,clip=true,angle=0]{o2cs-o2cs}
+}
+
+\caption{O$_2$ transmittance}
+\end{figure}
+
+\raggedright
+Note that for water, the transmission of 0.4 norm corresponds to that of phosim with 1 norm, so in practice a 'tuning factor' of 0.4 is applied in the integration. In case of ozone and oxgen, tunning factors are not used, for good consistencies with phosim results.
+
+With the help of those transmittances easily obtained, we can see which band would be impacted and how.
+ 
+ \clearpage
+\subsection{Database}
+
+The source of data is sims\_sed\_library, a standard LSST SEDs library on which our numerical atmospheric simulation is run. It is available at:
+
+git clone git://dev.lsstcorp.org/LSST/sims/sims\_sed\_library.git
+
+The wDs and kurucz SEDs spectra are found in the folder: 
+ sims\_sed\_library/upstream/SEDs/starSED/wDs and 
+sims\_sed\_library/upstream/SEDs/starSED/kurucz
+
+,respectively.
+
+\clearpage
+\subsection{LSST Throughput}
+The figure shows the system throghput calculated by ModTran, combining the Rayleigh scattering, trace gases transmission (CO2, NH3, etc.), the optics (lens, mirrors), the CCD detector, and the filters. The nominal filter responsive curves are drawn in the background for comparison. 
+\FloatBarrier
+\graphicspath{{/home/bruno/users/weh40/Pictures/5figs/}}
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=1.2\textwidth,trim=0mm 0mm 0mm 0mm,clip=true,angle=0]{Fig2_sys}
+\caption{LSST - Throughput}
+\end{center}
+\end{figure}
+\FloatBarrier
+
+
+
+\clearpage
+\input{/home/bruno/users/weh40/Public/LaTeXfiles/report07242015_p.tex}
+
+\end{document}
